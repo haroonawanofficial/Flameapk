@@ -52,9 +52,6 @@ and more...
 https://streamable.com/s/mzt66/zprlaj
 
 # Author
-- 1N3
-
-# Update
 - Haroon Awan
 
 # Contact
