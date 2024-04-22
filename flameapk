@@ -1,0 +1,396 @@
+#!/bin/bash
+
+OKBLUE='\033[94m'
+OKRED='\033[91m'
+OKGREEN='\033[92m'
+OKORANGE='\033[93m'
+RESET='\e[0m'
+
+cat << "EOF"
+                                     )
+                            )      ((     (
+                           (        ))     )
+                    )       )      //     (
+               _   (        __    (     ~->>
+        ,-----' |__,_~~___<'__`)-~__--__-~->> <
+        | //  : | -__   ~__ o)____)),__ - '> >-  >
+        | //  : |- \_ \ -\_\ -\ \ \ ~\_  \ ->> - ,  >>
+        | //  : |_~_\ -\__\ \~'\ \ \, \__ . -<-  >>
+        `-----._| `  -__`-- - ~~ -- ` --~> >
+         _/___\_    //)_`//  | ||]
+   _____[_______]_[~~-_ (.L_/  ||
+  [____________________]' `\_,/'/
+    ||| /          |||  ,___,'./
+    ||| \          |||,'______|
+    ||| /          /|| I==||
+    ||| \       __/_||  __||__
+-----||-/------`-._/||-o--o---o---
+> \ /           Flameapk :  Artifical Intelligence Suite for Android Application Security
+(_,-'`> .'      Authors  :  1N3 - Haroon Awan 
+(_,'            Usage    :  flameapk android_file_here
+
+EOF
+
+
+echo -e "$RESET"
+
+echo -e "$OKRED [+] Unpacking In Progress"
+echo -e "$OKRED $RESET"
+unzip $PWD/$1 -d $PWD/$1-unzipped/ 
+baksmali d $PWD/$1-unzipped/classes.dex -o $PWD/$1-unzipped/classes.dex.out/ 2> /dev/null
+echo -e "$RESET"
+echo -e "$OKORANGE [>] Conversation In Progress"
+echo -e ""
+d2j-dex2jar $PWD/$1 -o $PWD/$1.jar --force 
+echo ""
+echo -e "$OKORANGE [>] Decompiling In Progress"
+echo -e ""
+jadx $PWD/$1 -j $(grep -c ^processor /proc/cpuinfo) -d $PWD/$1-jadx/ > /dev/null
+echo ""
+echo -e "$OKORANGE [>] Unpacking In Progress"
+echo -e ""
+apktool d $PWD/$1 -o $PWD/$1-unpacked/ -f 
+echo ""
+echo ""
+echo -e "$OKGREEN [>] Displaying Data "
+sleep 2
+echo -e "$RESET"
+find $PWD/$1 | egrep 'apk|class' --color=auto 2>/dev/null
+echo ""
+echo -e "$OKGREEN [>] Displaying Default AndroidManifest.xml"
+sleep 2
+echo -e "$RESET"
+cat $PWD/$1-unpacked/AndroidManifest.xml
+echo ""
+echo ""
+echo -e "$OKGREEN [>] Displaying Package Info in AndroidManifest.xml"
+sleep 2
+echo -e "$RESET"
+egrep -i 'package=' $PWD/$1-unpacked/AndroidManifest.xml --color=auto 2>/dev/null
+echo ""
+echo -e "$OKGREEN [>] Displaying Activities in AndroidManifest.xml"
+sleep 2
+echo -e "$RESET"
+egrep -i 'activity ' $PWD/$1-unpacked/AndroidManifest.xml --color=auto 2>/dev/null
+echo ""
+echo -e "$OKGREEN [>] Displaying Services in AndroidManifest.xml"
+sleep 2
+echo -e "$RESET"
+egrep -i 'service ' $PWD/$1-unpacked/AndroidManifest.xml --color=auto 2>/dev/null
+echo ""
+echo -e "$OKGREEN [>] Displaying Content Providers in AndroidManifest.xml"
+sleep 2
+echo -e "$RESET"
+egrep -i 'provider' $PWD/$1-unpacked/AndroidManifest.xml --color=auto 2>/dev/null
+echo ""
+echo -e "$OKGREEN [>] Displaying Broadcast Receivers in AndroidManifest.xml"
+sleep 2
+echo -e "$RESET"
+egrep -i 'receiver' $PWD/$1-unpacked/AndroidManifest.xml --color=auto 2>/dev/null
+echo ""
+echo -e "$OKGREEN [>] Displaying Intent Filter Actions in AndroidManifest.xml"
+sleep 2
+echo -e "$RESET"
+egrep -i 'action|category' $PWD/$1-unpacked/AndroidManifest.xml --color=auto 2>/dev/null
+echo ""
+echo -e "$OKGREEN [>] Displaying Permissions in AndroidManifest.xml"
+sleep 2
+echo -e "$RESET"
+egrep -i 'android.permission' $PWD/$1-unpacked/AndroidManifest.xml --color=auto 2>/dev/null
+echo ""
+echo -e "$OKGREEN [>] Displaying Exports in AndroidManifest.xml"
+sleep 2
+echo -e "$RESET"
+egrep -i 'exported="true"' $PWD/$1-unpacked/AndroidManifest.xml --color=auto 2>/dev/null
+echo ""
+echo -e "$OKGREEN [>] Displaying Backups in AndroidManifest.xml"
+sleep 2
+echo -e "$RESET"
+egrep -i 'backup' $PWD/$1-unpacked/AndroidManifest.xml --color=auto 2>/dev/null
+echo ""
+echo -e "$OKGREEN [>] Displaying all classes and methods"
+sleep 2
+echo -e "$RESET"
+dexdump -f $PWD/$1-unzipped/classes.dex -l xml | egrep 'class name' --color=auto 2>/dev/null
+dexdump -f $PWD/$1-unzipped/classes.dex -l xml | egrep 'method name' --color=auto 2>/dev/null
+
+################## DEVICE INFO
+echo ""
+echo -e "$OKGREEN [>] Searching for DeviceId references"
+sleep 2
+echo -e "$RESET"
+for a in `find $PWD/$1-jadx | egrep -i .java`; do egrep -nH 'getDeviceId' $a --color=auto 2>/dev/null; done;
+echo ""
+
+################## INTENT REFERENCES
+echo -e "$OKGREEN [>] Searching for android.intent references"
+sleep 2
+echo -e "$RESET"
+for a in `find $PWD/$1-jadx | egrep -i .java`; do egrep -nH 'android\.intent' $a --color=auto 2>/dev/null; done;
+echo ""
+
+################# COMMAND EXECUTION REFERENCES
+echo -e "$OKGREEN [>] Searching for command execution references"
+sleep 2
+echo -e "$RESET"
+for a in `find $PWD/$1-jadx | egrep -i .java`; do egrep -nH 'Runtime.getRuntime\(\).exec' $a --color=auto 2>/dev/null; done;
+echo ""
+
+################# SQLITE REFERENCES
+echo -e "$OKGREEN [>] Searching for SQLiteDatabase references"
+sleep 2
+echo -e "$RESET"
+for a in `find $PWD/$1-jadx | egrep -i .java`; do egrep -nH 'SQLiteDatabase' $a --color=auto 2>/dev/null; done;
+echo ""
+
+################# LOGGING REFERENCES
+echo -e "$OKGREEN [>] Searching for Log.d references"
+sleep 2
+echo -e "$RESET"
+for a in `find $PWD/$1-jadx | egrep -i .java`; do egrep -nH 'log\.d|Log\.' $a --color=auto 2>/dev/null; done;
+echo ""
+
+################# CONTENT PROVIDERS
+echo -e "$OKGREEN [>] Displaying content providers"
+sleep 2
+echo -e "$RESET"
+egrep -nH 'content://' -R $PWD/$1* --color=auto 2>/dev/null
+for a in `find $PWD/$1-jadx | egrep -i .java`; do egrep -nH '://' $a --color=auto 2>/dev/null; done;
+echo ""
+
+################# BROADCAST RECEIVERS
+echo -e "$OKGREEN [>] Searching for sendBroadcast references"
+sleep 2
+echo -e "$RESET"
+for a in `find $PWD/$1-jadx | egrep -i .java`; do egrep -nH 'sendBroadcast' $a --color=auto 2>/dev/null; done;
+echo ""
+
+################# SERVICE REFERENCES
+echo -e "$OKGREEN [>] Searching for Service references"
+sleep 2
+echo -e "$RESET"
+for a in `find $PWD/$1-jadx | egrep -i .java`; do egrep -nH 'stopService|startService' $a --color=auto 2>/dev/null; done;
+echo ""
+
+################# FILE REFERENCES
+echo -e "$OKGREEN [>] Searching for file:// references"
+sleep 2
+echo -e "$RESET"
+for a in `find $PWD/$1-jadx | egrep -i .java`; do egrep -nH 'file://' $a --color=auto 2>/dev/null; done;
+echo ""
+echo -e "$OKGREEN [>] Searching for getSharedPreferences references"
+echo -e "$RESET"
+for a in `find $PWD/$1-jadx | egrep -i .java`; do egrep -nH getSharedPreferences $a --color=auto 2>/dev/null; done;
+echo ""
+echo -e "$OKGREEN [>] Searching for getExternal references"
+echo -e "$RESET"
+for a in `find $PWD/$1-jadx | egrep -i .java`; do egrep -iH getExternal $a --color=auto 2>/dev/null; done;
+echo ""
+
+################# CRYPTO REFERENCES
+echo -e "$OKGREEN [>] Searching for Crpto references"
+sleep 2
+echo -e "$RESET"
+for a in `find $PWD/$1-jadx | egrep -i .java`; do egrep -nH 'crypto\.' $a --color=auto 2>/dev/null; done;
+echo ""
+echo -e "$OKGREEN [>] Searching for MessageDigest references"
+echo -e "$RESET"
+for a in `find $PWD/$1-jadx | egrep -i .java`; do egrep -nH 'MessageDigest' $a --color=auto 2>/dev/null; done;
+echo ""
+echo -e "$OKGREEN [>] Searching for java.util.Random references"
+echo -e "$RESET"
+for a in `find $PWD/$1-jadx | egrep -i .java`; do egrep -nH 'java\.util\.Random' $a --color=auto 2>/dev/null; done;
+echo ""
+echo -e "$OKGREEN [>] Searching for Base64 references"
+echo -e "$RESET"
+for a in `find $PWD/$1-jadx | egrep -i .java`; do egrep -nH 'Base64' $a --color=auto 2>/dev/null; done;
+echo ""
+echo -e "$OKGREEN [>] Searching for Hex references"
+echo -e "$RESET"
+for a in `find $PWD/$1-jadx | egrep -i .java`; do egrep -nH 'Hex|hex\.' $a --color=auto 2>/dev/null; done;
+echo ""
+
+################# HARDCODED SECRETS
+echo -e "$OKGREEN [>] Searching for hardcoded secrets"
+sleep 2
+echo -e "$RESET"
+for a in `find $PWD/$1-jadx | egrep -i .java`; do egrep -inH 'secret|password|username' $a --color=auto 2>/dev/null; done;
+echo ""
+echo -e "$OKGREEN [>] Searching for sensitive information"
+echo -e "$RESET"
+#strings $PWD/$1 | egrep -i 'user|pass|key|login|pwd|log' --color=auto  2>/dev/null
+strings $PWD/$1 > $PWD/$1-strings.txt
+echo ""
+
+################# URL VULNERABILITIES
+echo -e "$OKGREEN [>] Searching for URL's"
+sleep 2
+echo -e "$RESET"
+for a in `find $PWD/$1-jadx | egrep -i .java`; do egrep -nH 'www|http:|https:' $a --color=auto 2>/dev/null; done;
+echo ""
+echo -e "$OKGREEN [>] Searching for HTTP headers"
+echo -e "$RESET"
+for a in `find $PWD/$1-jadx | egrep -i .java`; do egrep -nH 'addHeader' $a --color=auto 2>/dev/null; done;
+echo ""
+echo -e "$OKGREEN [>] Searching for UDP and TCP Sockets"
+echo -e "$RESET"
+for a in `find $PWD/$1-jadx | egrep -i .java`; do egrep -nH '\.connect\(|\.disconnect|serverSocket|DatagramSocket' $a --color=auto 2>/dev/null; done;
+echo ""
+
+################# SSL REFERENCES
+echo -e "$OKGREEN  [>] Searching for client certificates"
+sleep 2
+echo -e "$RESET"
+find $PWD/$1-unzipped/ | egrep '\.pkcs|\.p12|\.cer|\.der' --color=auto 2>/dev/null
+echo ""
+echo -e "$OKGREEN  [>] Searching for SSL certificate pinning"
+echo -e "$RESET"
+for a in `find $PWD/$1-jadx | egrep -i .java`; do egrep -nH getCertificatePinningSSL $a --color=auto 2>/dev/null; done;
+echo ""
+echo -e "$OKGREEN [>]  Searching for SSL connections"
+echo -e "$RESET"
+for a in `find $PWD/$1-jadx | egrep -i .java`; do egrep -nH 'ssl\.SSL' $a --color=auto 2>/dev/null; done;
+
+################# WEBVIEW REFERENCES
+echo -e "$OKGREEN [>] Searching for WebView activity"
+sleep 2
+echo -e "$RESET"
+for a in `find $PWD/$1-jadx | egrep -i .java`; do egrep -nH WebView $a --color=auto 2>/dev/null; done;
+echo ""
+echo -e "$OKGREEN [>] Searching for addJavascriptInterface references"
+echo -e "$RESET"
+for a in `find $PWD/$1-jadx | egrep -i .java`; do egrep -nH addJavascriptInterface $a --color=auto 2>/dev/null; done;
+echo ""
+echo -e "$OKGREEN [>] Searching for setJavaScriptEnabled references"
+echo -e "$RESET"
+for a in `find $PWD/$1-jadx | egrep -i .java`; do egrep -nH setJavaScriptEnabled $a --color=auto 2>/dev/null; done;
+echo ""
+
+################# MISCELLANEOUS REFERENCES
+echo -e "$OKGREEN [>] Searching for Domain references"
+sleep 2
+echo -e "$RESET"
+for a in `find $PWD/$1-jadx | egrep -i .java`; do egrep -nH domain $a --color=auto 2>/dev/null; done;
+echo ""
+echo -e "$OKGREEN [>] Searching for Bucket references"
+sleep 2
+echo -e "$RESET"
+for a in `find $PWD/$1-jadx | egrep -i .java`; do egrep -nH buckets $a --color=auto 2>/dev/null; done;
+echo ""
+echo -e "$OKGREEN [>] Searching for Storage references"
+sleep 2
+echo -e "$RESET"
+for a in `find $PWD/$1-jadx | egrep -i .java`; do egrep -nH storage $a --color=auto 2>/dev/null; done;
+echo ""
+echo -e "$OKGREEN [>] Searching for Api references"
+sleep 2
+echo -e "$RESET"
+for a in `find $PWD/$1-jadx | egrep -i .java`; do egrep -nH api $a --color=auto 2>/dev/null; done;
+echo ""
+echo -e "$OKGREEN [>] Searching for Reporting references"
+sleep 2
+echo -e "$RESET"
+for a in `find $PWD/$1-jadx | egrep -i .java`; do egrep -nH 'report|reporting' $a --color=auto 2>/dev/null; done;
+echo ""
+echo -e "$OKGREEN [>] Searching for FTP references"
+sleep 2
+echo -e "$RESET"
+for a in `find $PWD/$1-jadx | egrep -i .java`; do egrep -nH ftp $a --color=auto 2>/dev/null; done;
+echo ""
+echo -e "$OKGREEN [>] Searching for Endpoint references"
+sleep 2
+echo -e "$RESET"
+for a in `find $PWD/$1-jadx | egrep -i .java`; do egrep -nH endpoint $a --color=auto 2>/dev/null; done;
+echo ""
+echo -e "$OKGREEN [>] Searching for Endpoint references"
+sleep 2
+echo -e "$RESET"
+for a in `find $PWD/$1-jadx | egrep -i .java`; do egrep -nH Endpoint $a --color=auto 2>/dev/null; done;
+echo ""
+echo -e "$OKGREEN [>] Searching for Endpoint references"
+sleep 2
+echo -e "$RESET"
+for a in `find $PWD/$1-jadx | egrep -i .java`; do egrep -nH EndPoint $a --color=auto 2>/dev/null; done;
+echo ""
+echo -e "$OKGREEN [>] Searching for Gopher references"
+sleep 2
+echo -e "$RESET"
+for a in `find $PWD/$1-jadx | egrep -i .java`; do egrep -nH gopher $a --color=auto 2>/dev/null; done;
+echo ""
+echo -e "$OKGREEN [>] Searching for Mail references"
+sleep 2
+echo -e "$RESET"
+for a in `find $PWD/$1-jadx | egrep -i .java`; do egrep -nH 'smtp|mail|pop3|exchange' $a --color=auto 2>/dev/null; done;
+echo ""
+echo -e "$OKGREEN [>] Searching for HTTPS references"
+sleep 2
+echo -e "$RESET"
+for a in `find $PWD/$1-jadx | egrep -i .java`; do egrep -nH http $a --color=auto 2>/dev/null; done;
+echo ""
+echo -e "$OKGREEN [>] Searching for SQL Database references"
+sleep 2
+echo -e "$RESET"
+for a in `find $PWD/$1-jadx | egrep -i .java`; do egrep -nH database $a --color=auto 2>/dev/null; done;
+echo ""
+echo -e "$OKGREEN [>] Searching for Subdomain references"
+sleep 2
+echo -e "$RESET"
+for a in `find $PWD/$1-jadx | egrep -i .java`; do egrep -nH subdomain $a --color=auto 2>/dev/null; done;
+echo ""
+echo -e "$OKGREEN [>] Searching for EMAIL references"
+sleep 2
+echo -e "$RESET"
+for a in `find $PWD/$1-jadx | egrep -i .java`; do egrep -E -o "\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,6}\b" $a --color=auto 2>/dev/null; done;
+echo ""
+echo -e "$OKGREEN [>] Searching for Google references"
+sleep 2
+echo -e "$RESET"
+for a in `find $PWD/$1-jadx | egrep -i .java`; do egrep -nH google $a --color=auto 2>/dev/null; done;
+echo ""
+echo -e "$OKGREEN [>] Searching for Firebase references"
+sleep 2
+echo -e "$RESET"
+for a in `find $PWD/$1-jadx | egrep -i .java`; do egrep -nH firebaseio $a --color=auto 2>/dev/null; done;
+echo ""
+echo -e "$OKGREEN [>] Searching for Facebook references"
+sleep 2
+echo -e "$RESET"
+for a in `find $PWD/$1-jadx | egrep -i .java`; do egrep -nH facebook $a --color=auto 2>/dev/null; done;
+echo ""
+echo -e "$OKGREEN [>] Searching for Ali BaBa references"
+sleep 2
+echo -e "$RESET"
+for a in `find $PWD/$1-jadx | egrep -i .java`; do egrep -nH alibaba $a --color=auto 2>/dev/null; done;
+echo ""
+echo -e "$OKGREEN [>] Searching for SSH references"
+sleep 2
+echo -e "$RESET"
+for a in `find $PWD/$1-jadx | egrep -i .java`; do egrep -nH ssh $a --color=auto 2>/dev/null; done;
+echo ""
+echo -e "$OKGREEN [>] Searching for Dump references"
+sleep 2
+echo -e "$RESET"
+for a in `find $PWD/$1-jadx | egrep -i .java`; do egrep -nH dump $a --color=auto 2>/dev/null; done;
+echo ""
+echo -e "$OKGREEN [>] Searching for API references"
+sleep 2
+echo -e "$RESET"
+for a in `find $PWD/$1-jadx | egrep -i .java`; do egrep -nH _api $a --color=auto 2>/dev/null; done;
+echo ""
+echo -e "$OKGREEN [>] Searching for API references"
+sleep 2
+echo -e "$RESET"
+for a in `find $PWD/$1-jadx | egrep -i .java`; do egrep -nH api_ $a --color=auto 2>/dev/null; done;
+echo ""
+echo -e "$OKGREEN [>] Searching for API references"
+sleep 2
+echo -e "$RESET"
+for a in `find $PWD/$1-jadx | egrep -i .java`; do egrep -nH _api_ $a --color=auto 2>/dev/null; done;
+echo ""
+echo -e "$OKGREEN [>] Searching for Valid I.P. Address references"
+sleep 2
+echo -e "$RESET"
+for a in `find $PWD/$1-jadx | egrep -i .java`; do grep -E -o '(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)' $a --color=auto 2>/dev/null; done;
+echo ""
+echo -e "$OKRED DONE!"
+echo -e "$RESET"

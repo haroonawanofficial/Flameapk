@@ -1,0 +1,15 @@
+Source: flameapk
+Section: net
+Priority: major
+Maintainer: Haroon Awan <mrharoonawan@gmail.com>
+Uploaders:  Haroon Awan <mrharoonawan@gmail.com>
+Build-Depends: debhelper (>= 11)
+Standards-Version: 4.1.3
+Homepage: https://github.com/haroonawanofficial/flameapk
+#Vcs-Browser: https://github.com/haroonawanofficial/flameapk
+#Vcs-Git: https://github.com/haroonawanofficial/flameapk.git
+
+Package: flameapk
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}, bash
+Description: Tool that extracts all information from apk tool
