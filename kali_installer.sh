@@ -8,9 +8,7 @@ RESET='\e[0m'
 
 echo -e ""
 echo -e "$OKORANGE                                           "
-echo -e " [+] Authors : 		--=[(  1N3@CrowdShield / Haroon Awan )]=--        "
-echo -e " [+] Web     :  --=[( https://crowdshield.com http://bugbountylive.com )]=--  "
-echo -e ""
+
 echo -e "$RESET"
 echo -e "$OKGREEN"
 echo -e " [+] Installation in Progress ..."
