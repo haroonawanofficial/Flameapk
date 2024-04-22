@@ -1,0 +1,15 @@
+Source: flameapk
+Section: unknown
+Priority: optional
+Maintainer: root <root@kali>
+Build-Depends: debhelper-compat (= 12)
+Standards-Version: 4.4.1
+Homepage: <insert the upstream URL, if relevant>
+#Vcs-Browser: https://salsa.debian.org/debian/flameapk
+#Vcs-Git: https://salsa.debian.org/debian/flameapk.git
+
+Package: flameapk
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}
+Description: <insert up to 60 chars description>
+ <insert long description, indented with spaces>
