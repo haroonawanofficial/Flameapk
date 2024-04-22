@@ -26,7 +26,7 @@ cat << "EOF"
     ||| \       __/_||  __||__
 -----||-/------`-._/||-o--o---o---
 > \ /           Flameapk :  Artifical Intelligence Suite for Android Application Security
-(_,-'`> .'      Authors  :  1N3 - Haroon Awan 
+(_,-'`> .'      Authors  :  Haroon Awan 
 (_,'            Usage    :  flameapk android_file_here
 
 EOF
