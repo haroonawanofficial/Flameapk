@@ -29,3 +29,43 @@ Argument Parsing: Utilizes argparse to handle command-line arguments, including 
 File Type Dispatch: Determines the file type based on the extension and calls the corresponding analysis function.
 Reporting: Generates logs and HTML reports upon completion.
 Completion Notification: Informs the user upon successful completion of the analysis.
+
+
+Usage Examples
+1. Basic Analysis via Command Line
+python flameapk_pro.py path_to_application.apk
+2. Custom Information Extraction
+Specify custom patterns using the --custom flag. Multiple --custom flags can be used for different patterns.
+
+bash
+Copy
+python flameapk_pro.py path_to_application.apk --custom "APIKey:AIza[0-9A-Za-z_-]{35}" --custom "Token:[A-Za-z0-9]{64}"
+3. Analyzing Other File Types
+bash
+Copy
+# Windows Executable
+python flameapk_pro.py path_to_executable.exe
+
+# Linux Executable
+python flameapk_pro.py path_to_executable.elf
+
+# macOS Executable
+python flameapk_pro.py path_to_executable.dylib
+
+# Golang Binary
+python flameapk_pro.py path_to_binary.go
+
+# Document File
+python flameapk_pro.py path_to_document.pdf
+
+# Archive File
+python flameapk_pro.py path_to_archive.zip
+
+# PCAP File
+python flameapk_pro.py path_to_capture.pcap
+
+# PowerShell Script
+python flameapk_pro.py path_to_script.ps1
+
+# E-Mail File
+python flameapk_pro.py path_to_email.eml
