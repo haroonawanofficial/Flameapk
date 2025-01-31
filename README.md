@@ -1,5 +1,7 @@
 FLAMEAPK
 
+update will release after a month
+
 Modular Analysis Functions
 Each file type has dedicated functions for analysis:
 
